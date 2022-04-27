@@ -1,0 +1,5 @@
+*.db
+req*
+cert
+logs
+chomp.json

@@ -13,10 +13,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const (
-	dbPath = "chess.db"
-)
-
 var (
 	errTokenExpired = fmt.Errorf("token expired")
 )
@@ -27,6 +23,7 @@ type Database struct {
 }
 
 func NewDatabase() (Database, error) {
+	dbPath := config.DBConfig.AccountDatabase
 	_, err := os.Stat(dbPath)
 	empty := errors.Is(err, os.ErrNotExist)
 
@@ -355,5 +352,5 @@ func dbInit(db *sql.DB, guestsTable bool) {
 		}
 	}
 
-	slog.Printf("Populating database %s\n", dbPath)
+	slog.Printf("Populating database %s\n", config.DBConfig.AccountDatabase)
 }

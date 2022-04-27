@@ -66,9 +66,11 @@ func NewApi() (*API, error) {
 	}, nil
 }
 
-func (a *API) Run(addr string) error {
+func (a *API) Run() error {
 	slog.Printf("Starting API %s with options: %s\n", config.APIConfig.Version, configStr)
+	addr := config.APIConfig.ServeAddress
 	tlsConf := config.APIConfig.TLSConfig
+
 	if tlsConf != nil {
 		return a.eng.RunTLS(addr, tlsConf.CertFile, tlsConf.KeyFile)
 	}

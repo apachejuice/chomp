@@ -7,7 +7,6 @@ import (
 
 type ChompConfig struct {
 	Version   string         `json:"version"`
-	LogFile   string         `json:"logFile"`
 	APIConfig APIConfig      `json:"apiConfig"`
 	DBConfig  DatabaseConfig `json:"dbConfig"`
 }
@@ -16,6 +15,7 @@ type APIConfig struct {
 	Version         string     `json:"apiVersion"`
 	AllowGuestLogin bool       `json:"allowGuestLogin"`
 	BaseRoute       string     `json:"baseRoute"`
+	ServeAddress    string     `json:"serveAddress"`
 	TLSConfig       *TLSConfig `json:"tlsConfig"`
 }
 

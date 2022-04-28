@@ -192,7 +192,7 @@ func (d *Database) addSessionToken(acc auth.Account, token string) {
 		slog.Fatal(err)
 	}
 
-	slog.Printf("Created a new session token for user '%s' - expires at %s\n", acc.Username, time.Now().Local().Add(time.Hour))
+	slog.Printf("Created a new session token for user '%s' - expires at %s\n", acc.Username, time.Now().Local().Add(time.Hour*24))
 }
 
 func (d *Database) IsLoggedIn(username string) (bool, error) {
@@ -308,7 +308,7 @@ func (d *Database) checkToken(token string) bool {
 		}
 
 		if dbToken == token {
-			time := tokenExpires.Add(time.Hour).In(time.Local)
+			time := tokenExpires.Add(time.Hour * 24).In(time.Local)
 			if time.After(time.Local()) {
 				d.db.Exec(
 					fmt.Sprintf("UPDATE Accounts SET LoggedIn = 0, TokenExpiration = NULL, Token = '' WHERE TOKEN = '%s'", token),

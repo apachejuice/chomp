@@ -28,10 +28,17 @@ func json(c *gin.Context, status int, str string, args ...any) {
 	c.Data(status, "text/json", d)
 }
 
-func errJson(c *gin.Context, err error) {
+func errJson(c *gin.Context, err error, status ...int) {
+	s := 0
+	if len(status) == 0 {
+		s = http.StatusBadRequest
+	} else {
+		s = status[0]
+	}
+
 	slog.Printf("API returned error response at endpoint %s (status %d) to %s: %s\n",
-		c.Request.URL.Path, http.StatusBadRequest, c.ClientIP(), err.Error())
-	json(c, http.StatusBadRequest, `{"error": "%s"}`, err.Error())
+		c.Request.URL.Path, s, c.ClientIP(), err.Error())
+	json(c, s, `{"error": "%s"}`, err.Error())
 }
 
 func params(c *gin.Context, names ...string) (map[string]string, error) {
@@ -81,8 +88,8 @@ func (a *API) Run() error {
 func (a *API) SetEndpoints() {
 	br := config.APIConfig.BaseRoute
 	a.eng.GET(filepath.Join(br, "/version"), func(c *gin.Context) {
-		if err := checkIP(c.ClientIP()); err != nil {
-			errJson(c, err)
+		if status, err := checkIP(c.ClientIP()); err != nil {
+			errJson(c, err, status)
 			return
 		}
 
@@ -95,20 +102,20 @@ func (a *API) SetEndpoints() {
 	a.eng.GET(filepath.Join(br, "/loggedIn"), a.apiLoggedIn)
 }
 
-func checkIP(ip string) error {
+func checkIP(ip string) (int, error) {
 	for _, entry := range config.APIConfig.BannedIPs {
 		if entry == ip {
 			slog.Printf("Attempted request from banned IP %s\n", ip)
-			return fmt.Errorf("access denied")
+			return http.StatusForbidden, fmt.Errorf("access denied")
 		}
 	}
 
-	return nil
+	return -1, nil
 }
 
 func (a *API) apiLogin(c *gin.Context) {
-	if err := checkIP(c.ClientIP()); err != nil {
-		errJson(c, err)
+	if status, err := checkIP(c.ClientIP()); err != nil {
+		errJson(c, err, status)
 		return
 	}
 
@@ -129,8 +136,8 @@ func (a *API) apiLogin(c *gin.Context) {
 }
 
 func (a *API) apiLogout(c *gin.Context) {
-	if err := checkIP(c.ClientIP()); err != nil {
-		errJson(c, err)
+	if status, err := checkIP(c.ClientIP()); err != nil {
+		errJson(c, err, status)
 		return
 	}
 
@@ -150,8 +157,8 @@ func (a *API) apiLogout(c *gin.Context) {
 }
 
 func (a *API) apiRegister(c *gin.Context) {
-	if err := checkIP(c.ClientIP()); err != nil {
-		errJson(c, err)
+	if status, err := checkIP(c.ClientIP()); err != nil {
+		errJson(c, err, status)
 		return
 	}
 
@@ -177,8 +184,8 @@ func (a *API) apiRegister(c *gin.Context) {
 }
 
 func (a *API) apiLoggedIn(c *gin.Context) {
-	if err := checkIP(c.ClientIP()); err != nil {
-		errJson(c, err)
+	if status, err := checkIP(c.ClientIP()); err != nil {
+		errJson(c, err, status)
 		return
 	}
 

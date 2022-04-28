@@ -81,6 +81,11 @@ func (a *API) Run() error {
 func (a *API) SetEndpoints() {
 	br := config.APIConfig.BaseRoute
 	a.eng.GET(filepath.Join(br, "/version"), func(c *gin.Context) {
+		if err := checkIP(c.ClientIP()); err != nil {
+			errJson(c, err)
+			return
+		}
+
 		json(c, http.StatusOK, `{"version": "%s"}`, config.APIConfig.Version)
 	})
 
@@ -90,7 +95,23 @@ func (a *API) SetEndpoints() {
 	a.eng.GET(filepath.Join(br, "/loggedIn"), a.apiLoggedIn)
 }
 
+func checkIP(ip string) error {
+	for _, entry := range config.APIConfig.BannedIPs {
+		if entry == ip {
+			slog.Printf("Attempted request from banned IP %s\n", ip)
+			return fmt.Errorf("access denied")
+		}
+	}
+
+	return nil
+}
+
 func (a *API) apiLogin(c *gin.Context) {
+	if err := checkIP(c.ClientIP()); err != nil {
+		errJson(c, err)
+		return
+	}
+
 	params, err := loadJson(c)
 	if err != nil {
 		errJson(c, err)
@@ -108,6 +129,11 @@ func (a *API) apiLogin(c *gin.Context) {
 }
 
 func (a *API) apiLogout(c *gin.Context) {
+	if err := checkIP(c.ClientIP()); err != nil {
+		errJson(c, err)
+		return
+	}
+
 	params, err := loadJson(c)
 	if err != nil {
 		errJson(c, err)
@@ -124,6 +150,11 @@ func (a *API) apiLogout(c *gin.Context) {
 }
 
 func (a *API) apiRegister(c *gin.Context) {
+	if err := checkIP(c.ClientIP()); err != nil {
+		errJson(c, err)
+		return
+	}
+
 	params, err := loadJson(c)
 	if err != nil {
 		errJson(c, err)
@@ -146,6 +177,11 @@ func (a *API) apiRegister(c *gin.Context) {
 }
 
 func (a *API) apiLoggedIn(c *gin.Context) {
+	if err := checkIP(c.ClientIP()); err != nil {
+		errJson(c, err)
+		return
+	}
+
 	params, err := loadJson(c)
 	if err != nil {
 		errJson(c, err)

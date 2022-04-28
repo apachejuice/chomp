@@ -14,6 +14,7 @@ type ChompConfig struct {
 type APIConfig struct {
 	Version         string     `json:"apiVersion"`
 	AllowGuestLogin bool       `json:"allowGuestLogin"`
+	BannedIPs       []string   `json:"bannedIPs"`
 	BaseRoute       string     `json:"baseRoute"`
 	ServeAddress    string     `json:"serveAddress"`
 	TLSConfig       *TLSConfig `json:"tlsConfig"`
@@ -46,7 +47,9 @@ func LoadConfig() {
 	}
 
 	slog.Printf("Loaded configuration from %s\n", configFile)
-	slog.Printf("Chomp %s\n", c.Version)
+	slog.Println("====================== CHOMP ======================")
+	slog.Printf("Welome to Chomp %s!\n", c.Version)
+	slog.Println("===================================================")
 
 	configStr = string(data)
 	config = c

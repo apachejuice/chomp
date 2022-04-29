@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import datetime
 from os.path import join
+import sys
 from typing import List, Tuple
 import os
 import re
@@ -18,7 +19,7 @@ def yesno(q: str) -> bool:
 def find_files(date: datetime.date) -> List[Tuple[str, datetime.datetime]]:
     # note: we dont look at chomp.log or chomp.log.old.
     if not os.path.isdir('logs'):
-        return None
+        return []
 
     files = []
     for file in os.listdir('logs'):
@@ -68,13 +69,20 @@ def prompt_results(results: List[Tuple[str, datetime.datetime]]):
 
 
 def main():
-    while True:
+    if len(sys.argv) == 2:
         try:
-            date = input('Input the date you want to find logs for (YYYY-MM-DD): ')
-            filterby = datetime.datetime.strptime(date, "%Y-%m-%d")
-            break
-        except:
-            pass
+            filterby  = datetime.datetime.strptime(sys.argv[1], "%Y-%m-%d")
+        except Exception as e:
+            print(f'Error: {e}')
+            return
+    else:
+        while True:
+            try:
+                date = input('Input the date you want to find logs for (YYYY-MM-DD): ')
+                filterby = datetime.datetime.strptime(date, "%Y-%m-%d")
+                break
+            except:
+                pass
 
 
     results = prompt_results(find_files(filterby.date()))

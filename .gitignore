@@ -4,3 +4,5 @@ cert
 logs
 chomp.json
 bin
+*.log
+*.log.old

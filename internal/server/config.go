@@ -2,6 +2,7 @@ package server
 
 import (
 	encjson "encoding/json"
+	"log"
 	"os"
 )
 
@@ -53,4 +54,10 @@ func LoadConfig() {
 
 	configStr = string(data)
 	config = c
+
+	if c.APIConfig.TLSConfig == nil {
+		log.Println("WARNING: TLSConfig not set, serving HTTP")
+		log.Println("DO NOT SEND SENSITIVE DATA OVER THIS CONNECTION!")
+		slog.Println("Running on http; no encryption enabled!")
+	}
 }

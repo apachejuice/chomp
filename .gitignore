@@ -6,3 +6,4 @@ chomp.json
 bin
 *.log
 *.log.old
+.dir-cache

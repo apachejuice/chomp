@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 
 	"github.com/apachejuice/chomp/internal/server/auth"
-	"github.com/gin-gonic/autotls"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/acme/autocert"
 )
@@ -87,7 +86,14 @@ func (a *API) Run() error {
 			Cache:      autocert.DirCache(tlsConf.DirCache),
 		}
 
-		return autotls.RunWithManager(a.eng, &m)
+		// Copied from RunWithManager() to use the correct port
+		s := &http.Server{
+			Addr:      addr,
+			TLSConfig: m.TLSConfig(),
+			Handler:   a.eng,
+		}
+
+		return s.ListenAndServeTLS("", "")
 	}
 
 	return a.eng.Run(addr)

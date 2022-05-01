@@ -3,10 +3,11 @@ module github.com/apachejuice/chomp
 go 1.18
 
 require (
+	github.com/gin-gonic/autotls v0.0.3
 	github.com/gin-gonic/gin v1.7.7
 	github.com/mattn/go-sqlite3 v1.14.12
 	github.com/satori/go.uuid v1.2.1-0.20181028125025-b2ce2384e17b
-	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
+	golang.org/x/crypto v0.0.0-20220427172511-eb4f295cb31f
 )
 
 require (
@@ -21,6 +22,8 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
+	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
 	golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1 // indirect
+	golang.org/x/text v0.3.6 // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )

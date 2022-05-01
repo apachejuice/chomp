@@ -26,8 +26,8 @@ type DatabaseConfig struct {
 }
 
 type TLSConfig struct {
-	CertFile string `json:"certFile"`
-	KeyFile  string `json:"keyFile"`
+	HostWhitelist []string `json:"hostWhitelist"`
+	DirCache      string   `json:"dirCache"`
 }
 
 var config *ChompConfig = nil

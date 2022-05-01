@@ -144,9 +144,12 @@ func runInit(args []string) {
 
 		useTLS := yesNo("Do you wish to enable TLS? (you need a certificate and key)")
 		if useTLS {
+			whitelist := ask("Enter a comma-separated list of hosts to whitelist:")
+			dirCache := ask("Enter the cache directory:")
+
 			c.APIConfig.TLSConfig = &server.TLSConfig{}
-			c.APIConfig.TLSConfig.CertFile = ask("Enter the path for the certificate file:")
-			c.APIConfig.TLSConfig.KeyFile = ask("Enter the path for the key file:")
+			c.APIConfig.TLSConfig.HostWhitelist = strings.Split(strings.ReplaceAll(whitelist, " ", ""), ",")
+			c.APIConfig.TLSConfig.DirCache = dirCache
 		}
 
 		data, err := json.Marshal(c)

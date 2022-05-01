@@ -6,7 +6,9 @@ import (
 	"path/filepath"
 
 	"github.com/apachejuice/chomp/internal/server/auth"
+	"github.com/gin-gonic/autotls"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 type API struct {
@@ -79,7 +81,13 @@ func (a *API) Run() error {
 	tlsConf := config.APIConfig.TLSConfig
 
 	if tlsConf != nil {
-		return a.eng.RunTLS(addr, tlsConf.CertFile, tlsConf.KeyFile)
+		m := autocert.Manager{
+			Prompt:     autocert.AcceptTOS,
+			HostPolicy: autocert.HostWhitelist(tlsConf.HostWhitelist...),
+			Cache:      autocert.DirCache(tlsConf.DirCache),
+		}
+
+		return autotls.RunWithManager(a.eng, &m)
 	}
 
 	return a.eng.Run(addr)
